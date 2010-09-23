@@ -1,0 +1,11 @@
+{% extends 'everes_core/contentsmeta_detail.html' %}
+
+{% load markup %}
+
+{% block after_summary %}
+  {{ object.abstraction|restructuredtext }}
+  <hr />
+  {% for note in object.note_set.all %}
+    <a href="{{ note.get_absolute_url }}">{{ note.note }}</a><br />
+  {% endfor %}
+{% endblock %}

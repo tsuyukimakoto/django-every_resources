@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<urlset xmlns="http://www.google.com/schemas/sitemap/0.84">
+{% for c in object_list %}
+  {% if forloop.first %}
+   <url>
+      <loc>http://{{ current_site.domain }}</loc>
+      <lastmod>{{ c.create_date|date:"Y-m-d" }}T{{ c.create_date|time:"H:i:s" }}+09:00</lastmod>
+      <changefreq>hourly</changefreq>
+      <priority>1.0</priority>
+   </url>{% endif %}
+   <url>
+     <loc>http://{{ current_site.domain }}{{ c.get_absolute_url }}</loc>
+     <lastmod>{{ c.create_date|date:"Y-m-d" }}T{{ c.create_date|time:"H:i:s" }}+09:00</lastmod>
+     <changefreq>never</changefreq>
+     <priority>0.5</priority>
+   </url>
+{% endfor %}
+</urlset>

@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+{% load everes_core_filter %}
+<head>
+  <meta name="generator" content="Every Resources {{ VERSION }}" />
+  <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+  <meta name="keywords" content="{% block keyword %}{% endblock %}" />
+  <link rel="stylesheet" href="{{ MEDIA_URL }}styles/basic.css" type="text/css" media="screen" />
+  <link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="http://{{ current_site.domain }}{% url everes_feed "core" %}" />
+  {% block additional_link %}{% endblock %}
+  {% block additional_js %}{% endblock %}
+  {% block additional_css %}{% endblock %}
+  <style type="text/css">{% if google_search_key %}#google_search { position: absolute; top:0;right:20px;}{% endif %}
+  {% block custom_css %}{% endblock %}
+  </style>
+  <script type="text/javascript"><!-- 
+  {% block custom_js %}{% endblock %}
+  --></script>
+  <title>{% block title %}{{ current_site.name }}{% endblock %}</title>
+</head>
+<body>
+  <div id="header">
+    <h2><a href="/">{{ current_site.name }}</a></h2>
+    {% if google_search_key %}
+    <div id="google_search">
+        <form action="http://www.google.co.jp/cse" id="cse-search-box">
+          <div>
+            <input type="hidden" name="cx" value="{{ google_search_key }}" />
+            <input type="hidden" name="ie" value="UTF-8" />
+            <input type="text" name="q" size="10" />
+            <input type="submit" name="sa" value="&#x691c;&#x7d22;" />
+          </div>
+        </form>
+        <script type="text/javascript" src="http://www.google.com/coop/cse/brand?form=cse-search-box&amp;lang=ja"></script>
+    </div>
+    {% endif %}
+    <ul>
+        <li><a href="{% url everes_about %}">about</a></li>
+        {% for ap in everes_apps %}
+        <li><a href="{% url everes_list_by_app ap %}">{{ ap }}</a></li>
+        {% endfor %}
+    </ul>
+  </div>
+  <div class="content">
+        {% block contents %}{% endblock contents %}
+  </div>
+  <div class="autopagerize_insert_before">&nbsp;</div>
+  <div class="sideboard">
+    <a href="http://djangopony.com/" class="ponybadge" title="Magic! Ponies! Django! Whee!"><img src="http://media.djangopony.com/img/small/badge.png" width="210" height="65" alt="ponybadge"></a>
+
+    {% if object %}
+    <div class="near_navigation">
+        <div class="previous_content">{% if object and object.get_previous_by_published_from %}<a href="{{ object.get_previous_by_published_from.get_absolute_url }}" title="{{ object.get_previous_by_published_from.title }}">Prev</a>{% else %}...{% endif %}
+        </div>
+        <div class="next_content">{% if object and object.get_next_by_published_from %}<a href="{{ object.get_next_by_published_from.get_absolute_url }}" title="{{ object.get_next_by_published_from.title }}">Next</a>{% else %}...{% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+
+    <h3>Powered by</h3>
+    <ul>
+      <li><a href="https://bitbucket.org/tsuyukimakoto/django-every_resources">Every Resources</a></li>
+    </ul>
+    <h3>Feedbacks</h3>
+    <ul>
+      <li><a href="{% url everes_comment_list %}">Comments</a></li>
+      <li><a href="{% url everes_trackback_list %}">Trackbacks</a></li>
+    </ul>
+    <h3>Tags</h3>
+    <ul>
+    {% for tag in everes_tags %}
+      <li><a href="{% url everes_list_by_tag tag.name %}">{{ tag.name }}</a></li>
+    {% endfor %}
+    </ul>
+    <h3>Calendar</h3>
+    <ul>
+    {% for day in everes_days %}
+      <li><a href="{% url everes_month_list day.year,day.month %}">{{ day|date:"Y年m月" }}</a></li>
+    {% endfor %}
+    </ul>
+  </div>
+  {% if object_list %}
+  <div class="paginator">
+      <span class="pagination">{% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">←</a>{% else %}←{% endif %}</span>
+      {% for p in paginator.page_range|splitpage:page_obj.number %}
+        {% ifequal p "..." %}
+        <span class="pagination">{{ p }}</span>
+        {% else %}
+        <span class="pagination"><a href="?page={{ p }}">{{ p }}</a></span>
+        {% endifequal %}
+      {% endfor %}
+      <span class="pagination">{% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}" rel="next">→</a>{% else %}→{% endif %}</span>
+  </div>
+  {% endif %}
+  {% if google_analytics_key %}
+  {% if not user.is_staff %}
+  <script type="text/javascript">
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  </script>
+  <script type="text/javascript">
+  try {
+  var pageTracker = _gat._getTracker("{{ google_analytics_key }}");
+  pageTracker._trackPageview();
+  } catch(err) {}</script>
+  {% endif %}
+  {% endif %}
+  <script type="text/javascript" src="http://s.hatena.ne.jp/js/HatenaStar.js"></script>
+  <script type="text/javascript">
+  Hatena.Star.SiteConfig = {
+    entryNodes: {
+      'div.post': {
+        uri: 'h2 a',
+        title: 'h2',
+        container: 'h2.cms_title'
+      },
+      'div.detail': {
+        uri: 'h1 a',
+        title: 'h1',
+        container: 'h1.cms_title'
+      },
+    }
+  };
+  </script>
+ </body>
+</html>

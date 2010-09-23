@@ -1,0 +1,30 @@
+{% load markup %}
+
+<div class="{{ obj.entity_type }} post listings hentry autopagerize_page_element">
+  <h2 class="cms_title"><a class="cms_link entry-title" href="{{ obj.get_absolute_url }}" rel="bookmark">&nbsp;{{ obj.title }}</a></h2>
+  <h3 class="cms_date">{{ obj.published_from|date:"Y年m月d日(D) H:i" }}
+      <span class="bookmarked">
+          <a href="http://clip.livedoor.com/redirect?link=http://{{ current_site.domain }}{{ obj.get_absolute_url }}&title={{ obj.title }}&ie=utf-8" title="この記事をクリップ！"><img src="http://parts.blog.livedoor.jp/img/cmn/clip_16_12_b.gif" width="16" height="12" alt="この記事をクリップ！" /></a>
+          <a href="http://clip.livedoor.com/page/http://{{ current_site.domain }}{{ obj.get_absolute_url }}">
+          <img src="http://image.clip.livedoor.com/counter/http://{{ current_site.domain }}{{ obj.get_absolute_url }}" /></a>
+          <a href="http://b.hatena.ne.jp/entry/http://{{ current_site.domain }}{{ obj.get_absolute_url }}">
+              <img src="http://d.hatena.ne.jp/images/b_entry.gif" />
+              <img src="http://b.hatena.ne.jp/entry/image/http://{{ current_site.domain }}{{ obj.get_absolute_url }}" alt="" border="0"/>
+          </a>
+      </span>
+  </h3>
+  <h3 class="star">&nbsp;</h3>
+  <div class="article">
+    {% block before_summary %}{% endblock %}
+    {% block summary %}
+    {% ifequal obj.input_mode "reST" %}
+      {{ obj.summary|restructuredtext }}
+    {% endifequal %}
+    {% ifequal obj.input_mode "HTML" %}
+      {{ obj.summary|safe }}
+    {% endifequal %}
+    {% endblock summary %}
+    {% block after_summary %}{% endblock %}
+  </div>
+  <div class="more"><a class="cms_link" href="{{ obj.get_absolute_url }}">read more</a></div>
+</div>

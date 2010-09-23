@@ -1,0 +1,30 @@
+{% extends 'everes_core/base.html' %}
+
+{% load markup %}
+
+{% block custom_css %}
+p.linkrole {
+    margin:0px;
+}
+{% endblock %}
+
+{% block contents %}
+  {% for userprofile in object_list %}
+  <div class="userprofile post listings">
+    <a name="{{ userprofile.user.username }}">
+    <h2 class="cms_title"><a href="#">&nbsp;{{ userprofile.nickname }}</a></h2>
+    <div class="article">
+        {% for linkrole in userprofile.linkrole_set.all %}
+        {% if forloop.first %}<h3>Link Role</h3>{% endif %}
+        <p class="linkrole"><a href="{{ linkrole.url }}">{{ linkrole.name }}</a></p>
+        {% endfor %}
+        {% if userprofile.outline %}<h3>Outline</h3>
+        <p class="outline">
+            {{ userprofile.outline|restructuredtext|safe }}
+        </p>
+        {% endif %}
+    </div>
+    <div class="more"><a class="cms_link" href="{{ obj.get_absolute_url }}">read more</a></div>
+  </div>
+  {% endfor %}
+{% endblock %}

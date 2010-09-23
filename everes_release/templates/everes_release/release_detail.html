@@ -1,0 +1,14 @@
+{% extends 'everes_core/contentsmeta_detail.html' %}
+
+{% block custom_css %}
+{{ block.super }}
+p.download {
+    background-color: #a4bbff;
+    padding: 1em;
+    text-align: center;
+}
+{% endblock %}
+
+{% block after_summary %}
+<p class="download">Download:<a href="{{ object.file.url }}">{{ object.file.url }}</a></p>
+{% endblock %}

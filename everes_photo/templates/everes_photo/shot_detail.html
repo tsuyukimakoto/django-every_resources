@@ -1,0 +1,58 @@
+{% extends 'everes_core/contentsmeta_detail.html' %}
+
+{% load markup %}
+
+{% block custom_css %}
+  table.photo_meta_table {
+    font-size: 45% !important;
+  }
+  div.post .article table.photo_meta_table thead th, div.post .article table.photo_meta_table thead td{
+      background-color: #999999;
+      text-align: center;
+  }
+  div.post .article table.photo_meta_table th, div.post .article table.photo_meta_table td {
+      border: 1px solid #AEB2BF;
+      padding: .2em .8em;
+  }
+  div.post .article table.photo_meta_table th {
+      color: #444444;
+      width: 50px;
+      text-align: right;
+  }
+  div.post .article table.photo_meta_table td {
+      width: 150px;
+      text-align: left;
+  }
+  table.photo_meta_table th.odd, table.photo_meta_table td.odd {
+      background-color: #DEE2EF;
+  }
+  .shot_image {
+      max-width: 600px;
+  }
+{% endblock %}
+
+{% block before_summary %}
+    <p><img src="{{ object.file.url }}" class="shot_image"/></p>
+{% endblock %}
+
+{% block after_summary %}
+    <table class="photo_meta_table">
+      <thead>
+        <tr><th colspan="2">EXIF Tag</th></tr>
+      </thead>
+      <tbody>
+        <tr><th class="odd">Image Make</th><td class="odd">{{ object.exif_maker }}</td></tr>
+        <tr><th class="even">Image Model</th><td class="even">{{ object.exif_model }}</td></tr>
+        <tr><th class="odd">EXIF DateTimeOriginal</th><td class="odd">{{ object.exif_datetime }}</td></tr>
+        <tr><th class="even">EXIF FocalLengthIn35mmFilm</th><td class="even">{{ object.exif_focal_length_in_35mm }}</td></tr>
+        <tr><th class="odd">EXIF FNumber</th><td class="odd">{{ object.exif_f_number }}</td></tr>
+        <tr><th class="even">EXIF ISOSpeedRatings</th><td class="even">{{ object.exif_iso }}</td></tr>
+        <tr><th class="odd">EXIF ExposureTime</th><td class="odd">{{ object.exif_exposure_time }}</td></tr>
+        <tr><th class="even">EXIF ExposureBiasValue</th><td class="even">{{ object.exif_exposure_bias_value }}</td></tr>
+        <tr><th class="odd">EXIF MeteringMode</th><td class="odd">{{ object.exif_metering_mode }}</td></tr>
+        <tr><th class="even">GPSLatitude</th><td class="even">{{ object.exif_gps_latitude }}</td></tr>
+        <tr><th class="odd">GPSLongitude</th><td class="odd">{{ object.exif_gps_longitude }}</td></tr>
+        <tr><th class="even">GPSAltitude</th><td class="even">{{ object.exif_gps_altitude }}</td></tr>
+      </tbody>
+    </table>
+{% endblock %}

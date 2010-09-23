@@ -1,0 +1,14 @@
+{% extends 'everes_core/contentsmeta_detail.html' %}
+
+{% load markup %}
+
+{% block contents_class %}event{% endblock %}
+
+{% block before_summary %}
+  [{{ object.target_date|date:"Y年m月d日(D)" }}のイベント]
+{% endblock %}
+
+{% block after_summary %}
+    {{ object.abstraction|restructuredtext }}<br />
+    see detail:{{ object.url|urlize }}<br />
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'everes_core/base.html' %}
+{% block keyword %}{{ block.super }}{% for obj in object_list %}{{ obj.title }},{% for t in obj.tags.all %}{{ t.name }}{% if not forloop.last %},{% endif %}{% endfor %}{% endfor %}{% if obj.tags.all %},{% endif %}{% endblock %}
+
+{% block title %}{% spaceless %}
+{% if month %}
+  {{ block.super }} - Archives {{ month.year }}/{{ month.month }}
+{% endif %}
+{% if day %}
+  {{ block.super }} - Archives {{ day.year }}/{{ day.month }}/{{ day.day }}
+{% endif %}
+{% if filtered_tag %}
+  {{ block.super }} - Tagged {{ filtered_tag }}
+{% endif %}
+{% endspaceless %}{% endblock %}
+
+{% block additional_link %}
+{% if filtered_app %}<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="http://{{ current_site.domain }}{% url everes_feed filtered_app %}" />{% endif %}
+{% if filtered_tag %}<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="http://{{ current_site.domain }}{% url everes_tag_feed "all",filtered_tag %}" />{% endif %}
+{% if filtered_app and filtered_tag %}<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="http://{{ current_site.domain }}{% url everes_tag_feed app=filtered_app,tag=filtered_tag %}" />{% endif %}
+{% endblock %}
+
+{% block contents %}
+{% for obj in object_list %}
+{{ obj.render_as_list }}
+{% endfor %}
+{% endblock contents %}

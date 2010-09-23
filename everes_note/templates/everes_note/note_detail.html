@@ -1,0 +1,12 @@
+{% extends 'everes_core/contentsmeta_detail.html' %}
+
+{% load markup %}
+
+{% block before_summary %}
+<p style="text-align:right;"><a href="{{ object.project.get_absolute_url }}">return to {{ object.project.title }}</a></p>
+{% endblock %}
+
+{% block after_summary %}
+  {{ object.body|restructuredtext }}
+  <p style="text-align:right;"><a href="{{ object.project.get_absolute_url }}">return to {{ object.project.title }}</a></p>
+{% endblock %}

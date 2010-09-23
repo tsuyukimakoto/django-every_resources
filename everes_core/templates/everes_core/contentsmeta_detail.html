@@ -1,0 +1,182 @@
+{% extends 'everes_photo/base.html' %}
+{% load markup %}
+
+{% block keyword %}{{ block.super }}{{ object.title }},{% for t in object.tags.all %}{{ t.name }}{% if not forloop.last %},{% endif %}{% endfor %},{% endblock %}
+
+{% block title %}{{ object.title }} | {{ current_site.name }}{% endblock %}
+
+{% block additional_js %}
+<script type="text/javascript" src="http://www.google.com/jsapi?key={{ google_api_key }}&hl=ja"></script>
+<script type="text/javascript">google.load("jquery", "1.2.6");</script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/feedback.js"></script>
+{% endblock %}
+
+{% block custom_js %}
+google.load("maps", "2");
+$(function() {
+    $('#before_comment').click(Feedback.generate_comment_uuid);
+    $('#before_trackback').click(Feedback.generate_trackback_uuid);
+    {% if object.has_location %}
+    var map;
+    google.setOnLoadCallback(function() {
+        if (GBrowserIsCompatible()) {
+            map = new GMap2(document.getElementById("map"));
+            map.addControl(new GSmallMapControl());
+            map.addControl(new GMapTypeControl());
+
+            var point = new GLatLng({{ object.location }});
+            map.setCenter(point, 15);
+            mrk = new GMarker(point, {draggable: true});
+            map.addOverlay(mrk);
+        }
+    });
+    {% endif %}
+});
+{% endblock %}
+
+{% block contents %}
+<div class="{{ object.entity_type }} post detail hentry">
+<!--
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/"
+     xmlns:dc="http://purl.org/dc/elements/1.1/">
+<rdf:Description
+    rdf:about="http://{{ current_site.domain }}/"
+    dc:title="{{ object.title }}"
+    dc:identifier="http://{{ current_site.domain }}{{ object.get_absolute_url }}"
+    dc:description="{% ifequal object.input_mode "reST" %}{{ object.summary|restructuredtext|force_escape }}{% endifequal %}{% ifequal object.input_mode "HTML" %}{{ object.summary|escape }}{% endifequal %}"
+    dc:creator="{{ object.author.get_profile.nickname }}"
+    dc:date="{{ object.published_from_as_iso8601 }}" />
+</rdf:RDF>
+-->
+  <h1 class="cms_title"><a class="cms_link entry-title" href="{{ object.get_absolute_url }}">&nbsp;{{ object.title }}</a></h1>
+  <h3 class="cms_date">{{ object.published_from|date:"Y年m月d日(D) H:i" }}
+      <span class="bookmarked">
+          <a href="http://clip.livedoor.com/redirect?link=http://{{ current_site.domain }}{{ object.get_absolute_url }}&title={{ object.title }}&ie=utf-8" title="この記事をクリップ！"><img src="http://parts.blog.livedoor.jp/img/cmn/clip_16_12_b.gif" width="16" height="12" alt="この記事をクリップ！" /></a>
+          <a href="http://clip.livedoor.com/page/http://{{ current_site.domain }}{{ object.get_absolute_url }}">
+          <img src="http://image.clip.livedoor.com/counter/http://{{ current_site.domain }}{{ object.get_absolute_url }}" />
+          </a>
+          <a href="http://b.hatena.ne.jp/entry/http://{{ current_site.domain }}{{ object.get_absolute_url }}" rel="bookmark">
+              <img src="http://d.hatena.ne.jp/images/b_entry.gif" />
+              <img src="http://b.hatena.ne.jp/entry/image/http://{{ current_site.domain }}{{ object.get_absolute_url }}" alt="" border="0"/>
+          </a>
+      </span>
+  </h3>
+  <div class="article">
+    {% block before_summary %}{% endblock %}
+    {% block summary %}
+    {% ifequal object.input_mode "reST" %}
+      {{ object.summary|restructuredtext }}
+    {% endifequal %}
+    {% ifequal object.input_mode "HTML" %}
+      {{ object.summary|safe }}
+    {% endifequal %}
+    {% endblock %}
+    {% block after_summary %}{% endblock %}
+  {% if google_adsense_key %}
+  {% if not user.is_staff %}
+  <script type="text/javascript"><!--
+    google_ad_client = "{{ google_adsense_key }}";
+    /* 728x90, 作成済み 09/01/02 */
+    google_ad_slot = "{{ google_ad_slot_key }}";
+    google_ad_width = 728;
+    google_ad_height = 90;
+    //-->
+    </script>
+    <script type="text/javascript"
+    src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+    </script>
+  {% endif %}
+  {% endif %}
+  </div>
+  <div class="pr">
+      {% for af in object.affiliates.all %}
+        {{ af.js|safe }}
+      {% endfor %}
+  </div>
+  <div class="post_meta">
+    <table class="meta_detail">
+        <tr><th>Author</th><td><a href="#">{{ object.author.username }}</a></td><th>Permalink</th><td>http://{{ current_site.domain }}{{ object.get_absolute_url }}</td></tr>
+        <tr><th>Published</th><td>{{ object.published_from|date:"Y年m月d日(D) H:i" }}</td><th>Tagged</th><td>
+            {% for tag in object.tags.all %}
+            <a href="{% url everes_list_by_tag tag.name %}">{{ tag.name }}</a>[<a href="{% url everes_list_by_app_and_tag app=object.app_name,tag=tag.name %}">{{ object.app_name }}'s</a>]
+            {% endfor %}
+            </td></tr>
+        <tr><th>Trackback</th><td>{{ object.trackback_cache }}</td><th>Comment</th><td>{{ object.comment_cache }}</td><tr>
+        {% if object.related_item.all %}
+        <tr><th>Related</th>
+          <td colspan="3">
+          {% for related in object.related_item.all %}
+            <p>{{ related.published_from|date:"Y年m月d日(D)" }}<a href="{{ related.cast.get_absolute_url }}">&nbsp;{{ related.title }}</a> [{{ related.entity_type }}]</p>
+          {% endfor %}
+          </td>
+        </tr>
+        {% endif %}
+    </table>
+    <table class="meta_simple">
+        <tr><th>Tagged</th><td>
+            {% for tag in object.tags.all %}
+            <a href="{% url everes_list_by_tag tag.name %}">{{ tag.name }}</a>[<a href="{% url everes_list_by_app_and_tag app=object.app_name,tag=tag.name %}">{{ object.app_name }}'s</a>]
+            {% endfor %}
+            </td></tr>
+        {% if object.related_item.all %}
+        <tr><th>Related</th>
+          <td colspan="3">
+          {% for related in object.related_item.all %}
+            <p>{{ related.published_from|date:"Y年m月d日(D)" }}<a href="{{ related.cast.get_absolute_url }}">&nbsp;{{ related.title }}</a> [{{ related.entity_type }}]</p>
+          {% endfor %}
+          </td>
+        </tr>
+        {% endif %}
+    </table>
+    {% if object.has_location %}
+    <div id="map" style="min-width:300px; min-height:150px;">&nbsp;</div>
+    {% endif %}
+  </div>
+  <div class="feedback">
+      {% for com in object.comment_set.all %}
+      {% if forloop.first %}<h3 class="feedback_heading">Comments</h3>{% endif %}
+      <p class="comment">
+        [{{ com.create_date|date:"Y年m月d日(D) H:i" }}] 
+        {% if com.url %}
+        <a href="{{ com.url }}">{{ com.commentator }}</a><br />
+        {% else %}
+        <span class="commentator">{{ com.commentator }}</span><br />
+        {% endif %}
+        <span class="opinion">{{ com.body|linebreaksbr|urlize }}</span>
+      </p>
+      {% endfor %}
+      {% for tra in object.trackback_set.all %}
+      {% if forloop.first %}<h3 class="feedback_heading">Trackbacks</h3>{% endif %}
+      <p class="trackback">
+        [{{ tra.create_date|date:"Y年m月d日(D) H:i" }}] <a href="{{ tra.url }}">{{ tra.blog_name }}</a><br />
+        {% if excerpt %}<span class="opinion">{{ com.excerpt|striptags|urlize|linebreaksbr }}</span>{% endif %}
+      </p>
+      {% endfor %}
+  </div>
+  <div class="reaction">
+    <form name="feedback">
+      <input type="hidden" id="comment_url_base" value="http://{{ current_site.domain }}{% url everes_add_comment_base object.app_name,object.id %}">
+      <input type="hidden" id="trackback_url_base" value="http://{{ current_site.domain }}{% url everes_add_trackback_base object.app_name,object.id %}">
+    </form>
+    <form name="comment_form" method="post">
+      <table>
+        {{ form }}
+        <tr><th><label>Submit</label></th><td><button type="submit">Comment.</button></td></tr>
+      </table>
+    </form>
+    <p>
+      <input type="button" id="before_comment" value="コメント投稿直前に、このボタンをクリックしてください。5分間だけコメントを受け付けます"/><br />
+      <input type="button" id="before_trackback" value="Trackbackするには、このボタンをクリックしてTrackback先URLを生成してください（同上5分間）"/><span id="trackbackurl"></span>
+    </p>
+  </div>      
+</div>
+<div class="near_navigation">
+    <div class="previous_content hentry">{% if object and object.get_previous_by_published_from %}<a href="{{ object.get_previous_by_published_from.get_absolute_url }}" class="entry-title" rel="bookmark">{{ object.get_previous_by_published_from.title }}</a>{% endif %}
+    </div>
+    <div class="next_content hentry">{% if object and object.get_next_by_published_from %}<a href="{{ object.get_next_by_published_from.get_absolute_url }}" class="entry-title" rel="bookmark">{{ object.get_next_by_published_from.title }}</a>{% endif %}
+    </div>
+</div>
+{% endblock contents %}
+
+

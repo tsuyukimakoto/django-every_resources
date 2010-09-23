@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+{% load everes_core_filter %}
+<head>
+  <meta name="generator" content="Every Resources {{ VERSION }}" />
+  <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+  <link rel="stylesheet" href="{{ MEDIA_URL }}styles/iphone.css" type="text/css" media="screen" />
+  <link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="http://{{ current_site.domain }}{% url everes_feed "core" %}" />
+  {% block additional_css %}{% endblock %}
+  <title>{% block title %}{{ current_site.name }}{% endblock %}</title>
+</head>
+<body>
+  <div id="header">
+      <h2><a href="/">{{ current_site.name }}</a></h2>
+      <ul>
+          <li><a href="{% url everes_about %}">about</a></li>
+          {% for ap in everes_apps %}
+          <li><a href="{% url everes_list_by_app ap %}">{{ ap }}</a></li>
+          {% endfor %}
+      </ul>
+  </div>
+  <div class="content">
+    {% block contents %}{% endblock contents %}
+  </div>
+  {% if object_list %}
+  <div class="paginator">
+      <span class="pagination">{% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">←</a>{% else %}←{% endif %}</span>
+      {% for p in paginator.page_range|splitpage:page_obj.number %}
+        {% ifequal p "..." %}
+        <span class="pagination">{{ p }}</span>
+        {% else %}
+        <span class="pagination"><a href="?page={{ p }}">{{ p }}</a></span>
+        {% endifequal %}
+      {% endfor %}
+      <span class="pagination">{% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}" rel="next">→</a>{% else %}→{% endif %}</span>
+  </div>
+  {% endif %}
+  {% if google_analytics_key %}
+  {% if not user.is_staff %}
+  <script type="text/javascript">
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  </script>
+  <script type="text/javascript">
+  try {
+  var pageTracker = _gat._getTracker("{{ google_analytics_key }}");
+  pageTracker._trackPageview();
+  } catch(err) {}</script>
+  {% endif %}
+  {% endif %}
+  <div class="footer">
+  </div>
+</body>
+</html>

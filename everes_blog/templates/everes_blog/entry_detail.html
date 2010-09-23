@@ -1,0 +1,12 @@
+{% extends 'everes_core/contentsmeta_detail.html' %}
+
+{% load markup %}
+
+{% block after_summary %}
+  {% ifequal object.input_mode "reST" %}
+    {{ object.body|restructuredtext }}
+  {% endifequal %}
+  {% ifequal object.input_mode "HTML" %}
+    {{ object.body|safe }}
+  {% endifequal %}
+{% endblock %}

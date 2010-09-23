@@ -1,0 +1,5 @@
+{% extends 'everes_core/contentsmeta_as_list.html' %}
+
+{% block before_summary %}
+  [{{ obj.target_date|date:"Y年m月d日(D)" }}のイベント]
+{% endblock %}

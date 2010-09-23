@@ -1,0 +1,1 @@
+{% load markup %}{% ifequal obj.input_mode "reST" %}{{ obj.summary|restructuredtext }}{% endifequal %}{% ifequal obj.input_mode "HTML" %}{{ obj.summary|safe }}{% endifequal %}

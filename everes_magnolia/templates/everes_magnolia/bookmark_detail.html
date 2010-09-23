@@ -1,0 +1,35 @@
+{% extends 'everes_core/contentsmeta_detail.html' %}
+
+{% load markup %}
+
+{% block custom_css %}
+{{ block.super }}
+
+p#before_summary {
+    padding-top: 1em;
+    font-size: medium;
+}
+p#before_summary ul li {
+    float: right;
+}
+p#before_summary:after {
+    content: ".";  
+    display: block;  
+    visibility: hidden;  
+    height: 0.1px;  
+    font-size: 0.1em;  
+    line-height: 0;  
+    clear: both;
+}
+{% endblock %}
+
+{% block summary %}
+{{ object.summary|linebreaksbr|safe }}
+{% endblock %}
+
+{% block before_summary %}
+<p id="before_summary"><img src="{{ object.screenshot }}" class="photo" /><br />
+    About : <a href="{{ object.url }}" rel="nofollow">{{ object.url }}</a><br />
+    Rate: {{ object.rating }}
+</p>
+{% endblock %}

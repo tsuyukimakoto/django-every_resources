@@ -1,0 +1,15 @@
+{% extends 'everes_core/base.html' %}
+
+{% block contents %}
+  {% for trackback in object_list %}
+  <div class="trackback post listings hentry">
+    <h2 class="cms_title"><a class="cms_link entry-title" href="{{ trackback.contents.cast.get_absolute_url }}" rel="bookmark">&nbsp;{{ trackback.contents.title }}</a></h2>
+    <h3 class="cms_date">{{ trackback.create_date|date:"Y年m月d日(D) H:i" }}</h3>
+    <div class="article">
+        <p class="commentator">trackbacked from <a href="{{ trackback.url }}" rel="nofollow">{{ trackback.blog_name}}</a></p>
+        <p>{{ trackback.excerpt|striptags|urlize|linebreaksbr }}
+    </div>
+    <div class="more"><a class="cms_link" href="{{ trackback.contents.cast.get_absolute_url }}#trackbacks">read more</a></div>
+  </div>
+  {% endfor %}    
+{% endblock %}

@@ -1,0 +1,6 @@
+{% extends 'everes_core/contentsmeta_as_list.html' %}
+
+{% load markup %}
+{% load photo_filter %}
+
+{% block before_summary %}<p><img src="{{ MEDIA_URL }}{{ obj|variation:"listing" }}" class="thumbnail" /></p>{% endblock %}
